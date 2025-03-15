@@ -64,15 +64,21 @@ esp32:
 
       CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC: "y"
       CONFIG_MBEDTLS_SSL_PROTO_TLS1_3: "y"  # TLS1.3 support isn't enabled by default in IDF 5.1.5
+      CONFIG_MBEDTLS_CERTIFICATE_BUNDLE: "y"
+      #CONFIG_MBEDTLS_CUSTOM_CERTIFICATE_BUNDLE: "y"
+      #CONFIG_MBEDTLS_CUSTOM_CERTIFICATE_BUNDLE_PATH: "/home/sven/home-assistant-voice-pe/certs/root_ca.crt"
 
 wifi:
   id: wifi_id
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
   fast_connect: ${hidden_ssid}
   on_connect:
     - lambda: id(improv_ble_in_progress) = false;
     - script.execute: control_leds
   on_disconnect:
     - script.execute: control_leds
+  use_address: ha-va.internal  
 
 logger:
   level: DEBUG
@@ -1691,3 +1697,12 @@ button:
 
 debug:
   update_interval: 5s
+
+esp32_ble_tracker:
+  scan_parameters:
+    window: 1100ms
+    interval: 1100ms
+    active: true
+
+bluetooth_proxy:
+  active: true
